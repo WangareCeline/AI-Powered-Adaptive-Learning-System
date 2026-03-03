@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Adaptive Learning System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <h1>AI Learning System</h1>
+            </div>
+            <div class="status-badge" id="connectionStatus">
+                <i class="fas fa-circle"></i>
+                <span>Connected</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mode Selection -->
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="ask" id="askModeBtn">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Ask Questions</span>
+                </button>
+                <button class="mode-btn" data-mode="quiz" id="quizModeBtn">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Teacher Quiz</span>
+                </button>
+            </div>
+
+            <!-- Ask Mode Interface -->
+            <div id="askMode" class="mode-panel active">
+                <div class="panel-header">
+                    <h2><i class="fas fa-comment"></i> Ask Me Anything</h2>
+                    <p>Get answers based on your learning materials</p>
+                </div>
+                
+                <div class="ask-interface">
+                    <div class="input-group">
+                        <textarea 
+                            id="questionInput" 
+                            placeholder="Type your question here..."
+                            rows="3"
+                        ></textarea>
+                        <button id="askButton" class="primary-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Ask Question
+                        </button>
+                    </div>
+
+                    <div class="chat-container" id="chatContainer">
+                        <!-- Chat messages will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Mode Interface -->
+            <div id="quizMode" class="mode-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-chalkboard-teacher"></i> Your AI Teacher</h2>
+                    <p>Interactive quiz session with instant feedback</p>
+                </div>
+
+                <!-- Quiz Setup -->
+                <div id="quizSetup" class="quiz-setup">
+                    <div class="setup-card">
+                        <h3>Start a Quiz Session</h3>
+                        <div class="input-group">
+                            <label for="numQuestions">Number of Questions:</label>
+                            <input 
+                                type="number" 
+                                id="numQuestions" 
+                                min="1" 
+                                max="20" 
+                                value="5"
+                                class="number-input"
+                            >
+                        </div>
+                        <div class="input-group">
+                            <label for="topicInput">Topic (optional):</label>
+                            <input 
+                                type="text" 
+                                id="topicInput" 
+                                placeholder="e.g., Mathematics, History..."
+                                class="text-input"
+                            >
+                        </div>
+                        <button id="startQuizBtn" class="primary-btn">
+                            <i class="fas fa-play"></i>
+                            Start Learning
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Quiz -->
+                <div id="activeQuiz" class="active-quiz" style="display: none;">
+                    <!-- Quiz Header -->
+                    <div class="quiz-header">
+                        <div class="quiz-progress">
+                            <div class="progress-text">
+                                Question <span id="currentQuestionNum">1</span> of <span id="totalQuestions">5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+                            </div>
+                        </div>
+                        <div class="quiz-score">
+                            <i class="fas fa-star"></i>
+                            <span>Score: <span id="currentScore">0</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Question Card -->
+                    <div class="question-card">
+                        <div class="source-badge" id="questionSource">
+                            <i class="fas fa-book"></i>
+                            <span></span>
+                        </div>
+                        <div class="question-text" id="questionText">
+                            Loading question...
+                        </div>
+                        
+                        <!-- Answer Input -->
+                        <div class="answer-section">
+                            <textarea 
+                                id="answerInput" 
+                                placeholder="Type your answer here..."
+                                rows="2"
+                            ></textarea>
+                            <div class="answer-actions">
+                                <button id="submitAnswerBtn" class="primary-btn">
+                                    <i class="fas fa-check"></i>
+                                    Submit Answer
+                                </button>
+                                <button id="skipQuestionBtn" class="secondary-btn">
+                                    <i class="fas fa-forward"></i>
+                                    Skip
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Card -->
+                    <div id="feedbackCard" class="feedback-card" style="display: none;">
+                        <!-- Feedback will appear here -->
+                    </div>
+
+                    <!-- End Session Button -->
+                    <div class="quiz-footer">
+                        <button id="endQuizBtn" class="danger-btn">
+                            <i class="fas fa-stop"></i>
+                            End Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Results -->
+                <div id="quizResults" class="quiz-results" style="display: none;">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by AI - Learn at your own pace</p>
+            <div class="footer-stats">
+                <span><i class="fas fa-database"></i> <span id="docCount">-</span> documents</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Templates -->
+    <template id="messageTemplate">
+        <div class="chat-message">
+            <div class="message-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="message-sender"></span>
+                    <span class="message-time"></span>
+                </div>
+                <div class="message-text"></div>
+                <div class="message-sources"></div>
+            </div>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
