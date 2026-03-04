@@ -216,6 +216,9 @@ async function getNextQuestion() {
     // Show loading
     const loadingId = showLoading('Loading next question...');
     
+    // Hide next question button while loading
+    hideNextQuestionButton();
+    
     try {
         const response = await fetch(`${API_BASE_URL}/teacher/next/${currentSessionId}`);
         
@@ -230,14 +233,15 @@ async function getNextQuestion() {
         document.getElementById('questionSource').querySelector('span').textContent = data.source;
         document.getElementById('currentQuestionNum').textContent = data.question_number;
         
-        // Store question context (will be needed for answer submission)
+        // Store question context
         window.currentQuestionData = data;
         
         // Clear previous feedback and answer
         document.getElementById('answerInput').value = '';
         document.getElementById('feedbackCard').style.display = 'none';
         
-        // Enable submit button
+        // Enable answer input and buttons
+        document.getElementById('answerInput').disabled = false;
         document.getElementById('submitAnswerBtn').disabled = false;
         document.getElementById('skipQuestionBtn').disabled = false;
         
@@ -380,6 +384,49 @@ async function skipQuestion() {
     }
 }
 
+// Add these functions to script.js
+
+function showNextQuestionButton() {
+    const nextButtonContainer = document.getElementById('nextQuestionContainer');
+    if (nextButtonContainer) {
+        nextButtonContainer.style.display = 'block';
+        
+        // Add event listener if not already added
+        const nextButton = document.getElementById('nextQuestionBtn');
+        if (nextButton) {
+            // Remove old event listener to prevent duplicates
+            nextButton.removeEventListener('click', handleNextQuestion);
+            nextButton.addEventListener('click', handleNextQuestion);
+        }
+    }
+}
+
+function hideNextQuestionButton() {
+    const nextButtonContainer = document.getElementById('nextQuestionContainer');
+    if (nextButtonContainer) {
+        nextButtonContainer.style.display = 'none';
+    }
+}
+
+async function handleNextQuestion() {
+    // Hide the next question button
+    hideNextQuestionButton();
+    
+    // Hide feedback card
+    document.getElementById('feedbackCard').style.display = 'none';
+    
+    // Enable answer input
+    document.getElementById('answerInput').disabled = false;
+    document.getElementById('answerInput').value = '';
+    
+    // Re-enable submit and skip buttons for the next question
+    document.getElementById('submitAnswerBtn').disabled = false;
+    document.getElementById('skipQuestionBtn').disabled = false;
+    
+    // Get the next question
+    await getNextQuestion();
+}
+
 function showFeedback(data) {
     const feedbackCard = document.getElementById('feedbackCard');
     
@@ -413,11 +460,47 @@ function showFeedback(data) {
     
     // Scroll feedback into view
     feedbackCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    // ✅ NEW: Disable answer input and submit/skip buttons
+    document.getElementById('answerInput').disabled = true;
+    document.getElementById('submitAnswerBtn').disabled = true;
+    document.getElementById('skipQuestionBtn').disabled = true;
+    
+    // Check if this was the last question
+    if (currentQuizState.currentQuestion >= currentQuizState.totalQuestions) {
+        // If last question, show end session button instead of next question
+        setTimeout(() => {
+            showEndSessionButton();
+        }, 500);
+    } else {
+        // Show next question button
+        showNextQuestionButton();
+    }
 }
 
 function updateQuizProgress() {
     const progress = (currentQuizState.currentQuestion / currentQuizState.totalQuestions) * 100;
     document.getElementById('progressFill').style.width = `${progress}%`;
+}
+
+function showEndSessionButton() {
+    const nextButtonContainer = document.getElementById('nextQuestionContainer');
+    if (nextButtonContainer) {
+        nextButtonContainer.innerHTML = `
+            <button id="endQuizAfterLastBtn" class="danger-btn">
+                <i class="fas fa-check-circle"></i>
+                See Results
+            </button>
+        `;
+        nextButtonContainer.style.display = 'block';
+        
+        const endButton = document.getElementById('endQuizAfterLastBtn');
+        if (endButton) {
+            endButton.addEventListener('click', () => {
+                endQuizSession();
+            });
+        }
+    }
 }
 
 async function endQuizSession() {
