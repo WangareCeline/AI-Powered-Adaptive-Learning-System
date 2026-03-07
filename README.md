@@ -10,3 +10,6 @@ An **AI-powered adaptive learning system** is an educational technology that use
     - Provide immediate, targeted **feedback**.
 
 **The main goal** is to mimic a human tutor by providing the right content, at the right time, in the right way for each learner, ultimately leading to more efficient and effective learning outcomes.
+
+3/7/2026. 
+not much progress today. 
