@@ -13,3 +13,5 @@ An **AI-powered adaptive learning system** is an educational technology that use
 
 3/7/2026. 
 not much progress today. 
+3/8/2026. 
+not much progress today   
