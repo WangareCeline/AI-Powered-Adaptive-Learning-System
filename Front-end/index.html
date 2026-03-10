@@ -9,187 +9,217 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <i class="fas fa-robot"></i>
-                <h1>AI Learning System</h1>
+    <!-- Auth Modal (three tabs) -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2><i class="fas fa-robot"></i> AI Learning System</h2>
+                <p>Please log in to continue</p>
             </div>
-            <div class="status-badge" id="connectionStatus">
-                <i class="fas fa-circle"></i>
-                <span>Connected</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="studentLoginTab">Student Login</button>
+                <button class="auth-tab" id="studentSignupTab">Student Sign Up</button>
+                <button class="auth-tab" id="teacherLoginTab">Teacher Login</button>
             </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Mode Selection -->
-            <div class="mode-selector">
-                <button class="mode-btn active" data-mode="ask" id="askModeBtn">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Ask Questions</span>
-                </button>
-                <button class="mode-btn" data-mode="quiz" id="quizModeBtn">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Teacher Quiz</span>
-                </button>
+            <!-- Student Login Form -->
+            <div class="auth-form active" id="studentLoginForm">
+                <div class="input-group">
+                    <label for="studentLoginEmail">Email</label>
+                    <input type="email" id="studentLoginEmail" placeholder="your@email.com" required>
+                </div>
+                <button id="studentLoginBtn" class="primary-btn">Continue</button>
+                <p class="auth-note">Existing students will be logged in automatically.</p>
             </div>
-
-            <!-- Ask Mode Interface -->
-            <div id="askMode" class="mode-panel active">
-                <div class="panel-header">
-                    <h2><i class="fas fa-comment"></i> Ask Me Anything</h2>
-                    <p>Get answers based on your learning materials</p>
+            <!-- Student Signup Form -->
+            <div class="auth-form" id="studentSignupForm">
+                <div class="input-group">
+                    <label for="studentSignupName">Name</label>
+                    <input type="text" id="studentSignupName" placeholder="Your name" required>
                 </div>
-                
-                <div class="ask-interface">
-                    <div class="input-group">
-                        <textarea 
-                            id="questionInput" 
-                            placeholder="Type your question here..."
-                            rows="3"
-                        ></textarea>
-                        <button id="askButton" class="primary-btn">
-                            <i class="fas fa-paper-plane"></i>
-                            Ask Question
-                        </button>
-                    </div>
-
-                    <div class="chat-container" id="chatContainer">
-                        <!-- Chat messages will appear here -->
-                    </div>
+                <div class="input-group">
+                    <label for="studentSignupEmail">Email</label>
+                    <input type="email" id="studentSignupEmail" placeholder="your@email.com" required>
                 </div>
+                <button id="studentSignupBtn" class="primary-btn">Create Account</button>
+                <p class="auth-note">A new account will be created if it doesn't exist.</p>
             </div>
-
-            <!-- Quiz Mode Interface -->
-            <div id="quizMode" class="mode-panel">
-                <div class="panel-header">
-                    <h2><i class="fas fa-chalkboard-teacher"></i> Your AI Teacher</h2>
-                    <p>Interactive quiz session with instant feedback</p>
+            <!-- Teacher Login Form -->
+            <div class="auth-form" id="teacherLoginForm">
+                <div class="input-group">
+                    <label for="teacherEmail">Email</label>
+                    <input type="email" id="teacherEmail" placeholder="teacher@example.com" required>
                 </div>
-
-                <!-- Quiz Setup -->
-                <div id="quizSetup" class="quiz-setup">
-                    <div class="setup-card">
-                        <h3>Start a Quiz Session</h3>
-                        <div class="input-group">
-                            <label for="numQuestions">Number of Questions:</label>
-                            <input 
-                                type="number" 
-                                id="numQuestions" 
-                                min="1" 
-                                max="20" 
-                                value="5"
-                                class="number-input"
-                            >
-                        </div>
-                        <div class="input-group">
-                            <label for="topicInput">Topic (optional):</label>
-                            <input 
-                                type="text" 
-                                id="topicInput" 
-                                placeholder="e.g., Mathematics, History..."
-                                class="text-input"
-                            >
-                        </div>
-                        <button id="startQuizBtn" class="primary-btn">
-                            <i class="fas fa-play"></i>
-                            Start Learning
-                        </button>
-                    </div>
+                <div class="input-group">
+                    <label for="teacherPassword">Password</label>
+                    <input type="password" id="teacherPassword" placeholder="password" required>
                 </div>
-
-                <!-- Active Quiz -->
-                <div id="activeQuiz" class="active-quiz" style="display: none;">
-                    <!-- Quiz Header -->
-                    <div class="quiz-header">
-                        <div class="quiz-progress">
-                            <div class="progress-text">
-                                Question <span id="currentQuestionNum">1</span> of <span id="totalQuestions">5</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progressFill" style="width: 20%"></div>
-                            </div>
-                        </div>
-                        <div class="quiz-score">
-                            <i class="fas fa-star"></i>
-                            <span>Score: <span id="currentScore">0</span></span>
-                        </div>
-                    </div>
-
-                    <!-- Question Card -->
-                    <div class="question-card">
-                        <div class="source-badge" id="questionSource">
-                            <i class="fas fa-book"></i>
-                            <span></span>
-                        </div>
-                        <div class="question-text" id="questionText">
-                            Loading question...
-                        </div>
-                        
-                        <!-- Answer Input -->
-                        <div class="answer-section">
-                            <textarea 
-                                id="answerInput" 
-                                placeholder="Type your answer here..."
-                                rows="2"
-                            ></textarea>
-                            <div class="answer-actions">
-                                <button id="submitAnswerBtn" class="primary-btn">
-                                    <i class="fas fa-check"></i>
-                                    Submit Answer
-                                </button>
-                                <button id="skipQuestionBtn" class="secondary-btn">
-                                    <i class="fas fa-forward"></i>
-                                    Skip
-                                </button>                                
-                            </div>
-                            <div id="nextQuestionContainer" class="next-question-container" style="display: none; margin-top: 1rem; text-align: center;">
-                                <button id="nextQuestionBtn" class="primary-btn">
-                                    <i class="fas fa-arrow-right"></i>
-                                    Next Question
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feedback Card -->
-                    <div id="feedbackCard" class="feedback-card" style="display: none;">
-                        <!-- Feedback will appear here -->
-                    </div>
-
-                    <!-- End Session Button -->
-                    <div class="quiz-footer">
-                        <button id="endQuizBtn" class="danger-btn">
-                            <i class="fas fa-stop"></i>
-                            End Session
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Quiz Results -->
-                <div id="quizResults" class="quiz-results" style="display: none;">
-                    <!-- Results will appear here -->
-                </div>
+                <button id="teacherLoginBtn" class="primary-btn">Login</button>
             </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>Powered by AI - Learn at your own pace</p>
-            <div class="footer-stats">
-                <span><i class="fas fa-database"></i> <span id="docCount">-</span> documents</span>
-            </div>
-        </footer>
+        </div>
     </div>
 
-    <!-- Templates -->
+    <!-- Main App (hidden until authenticated) -->
+    <div id="app" style="display: none;">
+        <div class="container">
+            <header class="header">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <h1>AI Learning System</h1>
+                </div>
+                <div class="header-right">
+                    <div class="status-badge" id="connectionStatus">
+                        <i class="fas fa-circle"></i>
+                        <span>Connected</span>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn" title="Logout" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <!-- Mode Selector (will be populated by JavaScript) -->
+                <div class="mode-selector" id="modeSelector"></div>
+
+                <!-- Student Progress Mode -->
+                <div id="progressMode" class="mode-panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-chart-bar"></i> Your Learning Progress</h2>
+                        <p>Performance summary across all topics</p>
+                    </div>
+                    <div class="progress-interface">
+                        <div id="progressLoading" style="display: none; text-align: center; padding: 2rem;">
+                            <div class="spinner"></div>
+                            <p>Loading your progress...</p>
+                        </div>
+                        <div id="progressContent" style="display: none;"></div>
+                        <div id="progressEmpty" style="display: none; text-align: center; padding: 2rem;">
+                            <p>No quiz data yet. Take a quiz to see your progress!</p>
+                            <button class="primary-btn" onclick="switchMode('quiz')">
+                                <i class="fas fa-play"></i> Start a Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Mode -->
+                <div id="quizMode" class="mode-panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-chalkboard-teacher"></i> Your AI Teacher</h2>
+                        <p>Interactive quiz session with instant feedback</p>
+                    </div>
+                    <div id="quizSetup" class="quiz-setup">
+                        <div class="setup-card">
+                            <h3>Start a Quiz Session</h3>
+                            <div class="input-group">
+                                <label for="numQuestions">Number of Questions:</label>
+                                <input type="number" id="numQuestions" min="1" max="20" value="5" class="number-input">
+                            </div>
+                            <div class="input-group">
+                                <label for="subjectSelect">Select Subject:</label>
+                                <select id="subjectSelect" class="text-input">
+                                    <option value="">Random (any subject)</option>
+                                    <option value="SQL">SQL</option>
+                                    <option value="Python">Python</option>
+                                </select>
+                            </div>
+                            <button id="startQuizBtn" class="primary-btn">
+                                <i class="fas fa-play"></i> Start Learning
+                            </button>
+                        </div>
+                    </div>
+                    <div id="activeQuiz" class="active-quiz" style="display: none;">
+                        <div class="quiz-header">
+                            <div class="quiz-progress">
+                                <div class="progress-text">
+                                    Question <span id="currentQuestionNum">1</span> of <span id="totalQuestions">5</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+                                </div>
+                            </div>
+                            <div class="quiz-score">
+                                <i class="fas fa-star"></i>
+                                <span>Score: <span id="currentScore">0</span></span>
+                            </div>
+                        </div>
+                        <div class="question-card">
+                            <div class="source-badge" id="questionSource">
+                                <i class="fas fa-book"></i>
+                                <span></span>
+                            </div>
+                            <div class="question-text" id="questionText">Loading question...</div>
+                            <div class="answer-section">
+                                <textarea id="answerInput" placeholder="Type your answer here..." rows="2"></textarea>
+                                <div class="answer-actions">
+                                    <button id="submitAnswerBtn" class="primary-btn">
+                                        <i class="fas fa-check"></i> Submit Answer
+                                    </button>
+                                    <button id="skipQuestionBtn" class="secondary-btn">
+                                        <i class="fas fa-forward"></i> Skip
+                                    </button>
+                                </div>
+                                <div id="nextQuestionContainer" class="next-question-container" style="display: none;">
+                                    <button id="nextQuestionBtn" class="primary-btn">
+                                        <i class="fas fa-arrow-right"></i> Next Question
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="feedbackCard" class="feedback-card" style="display: none;"></div>
+                        <div class="quiz-footer">
+                            <button id="endQuizBtn" class="danger-btn">
+                                <i class="fas fa-stop"></i> End Session
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quizResults" class="quiz-results" style="display: none;"></div>
+                </div>
+
+                <!-- Teacher Dashboard Mode -->
+                <div id="teacherDashboardMode" class="mode-panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-chalkboard"></i> Teacher Dashboard</h2>
+                        <p>Student performance overview</p>
+                    </div>
+                    <div class="dashboard-grid">
+                        <!-- Struggling Students Card -->
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Struggling Students</h3>
+                            <div class="threshold-input">
+                                <label for="threshold">Threshold (%):</label>
+                                <input type="number" id="threshold" value="50" min="0" max="100" step="5">
+                                <button id="refreshStruggling" class="small-btn"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+                            <div id="strugglingLoading" style="display: none;" class="loading-spinner">
+                                <div class="spinner"></div>
+                            </div>
+                            <div id="strugglingContent"></div>
+                        </div>
+                        <!-- Hardest Topic Card -->
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-chart-line"></i> Hardest Topic</h3>
+                            <div id="hardestLoading" style="display: none;" class="loading-spinner">
+                                <div class="spinner"></div>
+                            </div>
+                            <div id="hardestContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>Powered by AI - Learn at your own pace</p>
+                <div class="footer-stats">
+                    <span><i class="fas fa-database"></i> <span id="docCount">-</span> documents</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
     <template id="messageTemplate">
         <div class="chat-message">
-            <div class="message-avatar">
-                <i class="fas fa-user"></i>
-            </div>
+            <div class="message-avatar"><i class="fas fa-user"></i></div>
             <div class="message-content">
                 <div class="message-header">
                     <span class="message-sender"></span>

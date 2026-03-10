@@ -6,3 +6,4 @@ groq
 python-dotenv
 pypdf
 numpy
+psycopg2

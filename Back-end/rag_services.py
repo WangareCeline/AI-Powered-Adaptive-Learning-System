@@ -75,6 +75,22 @@ def retrieve_random_content():
         print(f"Error retrieving content: {e}")
         return None, None
 
+def retrieve_random_content_by_source(source_filter: str):
+    """Retrieve random content from documents whose source exactly matches the filter string."""
+    try:
+        # Use exact match on source
+        results = collection.get(where={"source": {"$eq": source_filter}})
+        if not results['documents']:
+            return None, None
+        random_idx = random.randint(0, len(results['documents']) - 1)
+        context = results['documents'][random_idx]
+        metadata = results['metadatas'][random_idx]
+        source = metadata.get('source', 'Unknown')
+        return context, source
+    except Exception as e:
+        print(f"Error retrieving content by source: {e}")
+        return None, None
+
 def generate_question_from_context(context: str, source: str) -> Dict:
     """Generate a question based on the context"""
     try:
@@ -191,30 +207,34 @@ def check_teacher_answer(question_id: str, question: str, user_answer: str, cont
 
 # ============= NEW FLOW FUNCTIONS =============
 
-def start_quiz_session(session_id: str, num_questions: int = 5, topic: Optional[str] = None) -> Dict:
+def start_quiz_session(session_id: str, student_id: int, num_questions: int = 5, topic: Optional[str] = None) -> Dict:
     """Initialize a new quiz session"""
     return {
         "session_id": session_id,
+        "student_id": student_id,          
         "active": True,
         "total_questions": num_questions,
         "topic": topic,
         "score": 0,
         "questions_answered": 0,
-        "current_question_number": 0,
-        "questions": [],  # Store asked questions
+        "questions": [],  # Store asked questions (for history)
         "current_question": None
     }
 
 def get_next_question(session: Dict) -> Dict:
-    """Get the next question in the session flow"""
+    """Get the next question in the session flow, optionally filtered by topic."""
     if session["questions_answered"] >= session["total_questions"]:
         return {"error": "Session complete"}
     
-    # Get random content
-    if session.get("topic"):
-        # If topic specified, we'd need to implement topic-based retrieval
-        # For now, fall back to random
-        context, source = retrieve_random_content()
+    topic = session.get("topic")
+    if topic:
+        # Map the topic (e.g., "SQL", "Python") to a source filter (filename)
+        source_filter = f"{topic.lower()}.pdf"
+        context, source = retrieve_random_content_by_source(source_filter)
+        if not context:
+            # Fallback to random if no content for that subject
+            print(f"No content found for {source_filter}, falling back to random")
+            context, source = retrieve_random_content()
     else:
         context, source = retrieve_random_content()
     
